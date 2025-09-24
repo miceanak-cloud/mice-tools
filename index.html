@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Tool Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --bg-color: #1E1E2F;
+            --text-color: #EAEAEA;
+            --header-bg: #2B2D42;
+            --accent-color: #FFD700;
+            --card-bg: #3A3D5B;
+            --hover-accent: #E6C200;
+            --shadow: rgba(255, 215, 0, 0.2);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--header-bg);
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Tool Categories */
+        .category {
+            margin-bottom: 3rem;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Tool Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Tool Card Styles */
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px var(--shadow);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--hover-accent));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tool-card:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
+        .tool-card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tool-card p {
+            font-size: 0.95rem;
+            margin-bottom: 1.2rem;
+            flex-grow: 1;
+            color: inherit;
+        }
+
+        .tool-btn {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-start;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--hover-accent);
+            transform: translateY(-2px);
+        }
+
+        .tool-card:hover .tool-btn {
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--header-bg);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        /* Loading Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content i {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background-color: var(--bg-color);
+            border-radius: 3px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .category-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tool-card {
+                padding: 1rem;
+            }
+            
+            .tool-card h2 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-tools"></i> Multi Tool Hub</h1>
+        <p class="tagline">Your all-in-one solution for everyday digital tasks</p>
+    </header>
+
+    <main>
+        <!-- Image & Video Tools -->
+        <section class="category">
+            <h2 class="category-title"><i class="fas fa-images"></i> Image & Video Tools</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h2><i class="fas fa-exchange-alt"></i> Image Converter</h2>
+                    <p>Convert single or multiple images between formats (JPG, PNG, WEBP, etc.)</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-compress-alt"></i> Image Compressor & Resizer</h2>
+                    <p>Shrink or resize images while maintaining quality for web and storage optimization</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-crop-alt"></i> Image Crop / Collage Maker</h2>
+                    <p>Trim images or arrange multiple photos into beautiful collage grids</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-layer-group"></i> Background Remover / Replacer</h2>
+                    <p>Automatically remove or swap backgrounds with AI-powered tools</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-film"></i> GIF Maker / Video-to-GIF</h2>
+                    <p>Create animated GIFs from images or video clips with custom settings</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-file-video"></i> Video Converter / Compressor</h2>
+                    <p>Change video formats and reduce file sizes without losing quality</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-tint"></i> Watermark Remover / Adder</h2>
+                    <p>Remove existing watermarks or add your own logos and text overlays</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-search-plus"></i> Image Enhancer / Upscaler</h2>
+                    <p>Improve image resolution and sharpness using advanced AI algorithms</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audio Tools -->
+        <section class="category">
+            <h2 class="category-title"><i class="fas fa-music"></i> Audio Tools</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h2><i class="fas fa-cut"></i> Audio Trim / Merge</h2>
+                    <p>Cut or combine audio clips with precision editing tools</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-exchange-alt"></i> Audio Converter</h2>
+                    <p>Convert between MP3, WAV, FLAC, AAC, and other audio formats</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-volume-mute"></i> Noise Remover / Audio Cleaner</h2>
+                    <p>Reduce background noise and enhance audio quality</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-microphone-alt"></i> Voice Changer / Pitch Shifter</h2>
+                    <p>Apply fun effects or serious pitch correction to audio recordings</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Calculators & Converters -->
+        <section class="category">
+            <h2 class="category-title"><i class="fas fa-calculator"></i> Calculators & Converters</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h2><i class="fas fa-birthday-cake"></i> Age Calculator</h2>
+                    <p>Calculate exact age and time between two dates</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-home"></i> EMI / Loan Calculator</h2>
+                    <p>Calculate monthly payments and amortization schedules</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-chart-line"></i> SIP / Investment Calculator</h2>
+                    <p>Plan your financial future with systematic investment calculations</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-weight"></i> BMI / Fitness Calculator</h2>
+                    <p>Calculate BMI, body fat percentage, and other fitness metrics</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Everyday Utilities -->
+        <section class="category">
+            <h2 class="category-title"><i class="fas fa-wrench"></i> Everyday Utilities</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h2><i class="fas fa-qrcode"></i> QR Code Generator / Scanner</h2>
+                    <p>Create custom QR codes or scan existing ones with your camera</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-key"></i> Password Generator</h2>
+                    <p>Create secure passwords with customizable length and character sets</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-assistive-listening-systems"></i> Text-to-Speech / Speech-to-Text</h2>
+                    <p>Convert text to natural speech or transcribe audio to text</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+                <div class="tool-card">
+                    <h2><i class="fas fa-palette"></i> Color Picker & Palette Generator</h2>
+                    <p>Grab hex/RGB values from anywhere or create harmonious color schemes</p>
+                    <button class="tool-btn">Use Tool <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Multi Tool Hub. All rights reserved.</p>
+    </footer>
+
+    <!-- Loading Modal -->
+    <div class="modal" id="loadingModal">
+        <div class="modal-content">
+            <i class="fas fa-cog fa-spin"></i>
+            <h3>Redirecting to Tool</h3>
+            <p id="toolName">Page under development</p>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <p>Please wait while we prepare your tool...</p>
+        </div>
+    </div>
+
+    <script>
+        // Add click event listeners to all tool buttons
+        document.querySelectorAll('.tool-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const toolName = this.parentElement.querySelector('h2').textContent;
+                showLoadingModal(toolName);
+            });
+        });
+
+        // Function to show loading modal
+        function showLoadingModal(toolName) {
+            const modal = document.getElementById('loadingModal');
+            const toolNameElement = document.getElementById('toolName');
+            const progressBar = document.getElementById('progressBar');
+            
+            toolNameElement.textContent = toolName;
+            modal.style.display = 'flex';
+            
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        progressBar.style.width = '0%';
+                    }, 500);
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
